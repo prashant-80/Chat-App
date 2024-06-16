@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <h1>chatting....Inside <%= roomid%>
+    </h1>
+
+    <!-- <button id="btn">
+        click
+    </button>
+    <div id="from_server"> -->
+
+
+    <input type="text" id="chat_box">
+    <button id="send">send</button>
+    <ul id="msgList">
+
+    </ul>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        var socket = io();
+
+        let input = document.getElementById('chat_box')
+        let msgList = document.getElementById('msgList')
+        let send = document.getElementById('send')
+
+        socket.emit('join_room', {
+            roomid: '<%= roomid %>'
+        })
+
+        send.addEventListener('click', () => {
+            let msg = input.value
+            socket.emit('new_msg', {
+                message: msg,
+                roomid: '<%= roomid %>',
+                sender: '<%= user %>'
+            });
+            input.value = ''
+        })
+
+        socket.on('msg_rcvd', (data) => {
+            let msg = document.createElement("li")
+            msg.textContent = data.sender+' - '+data.message
+            msgList.appendChild(msg);
+        })  
+    </script>
+</body>
+
+</html>
