@@ -4,53 +4,132 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Chat Room</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .chat-container {
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            width: 500px;
+            max-width: 90%;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-header {
+            background-color: #007bff;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            font-size: 1.5em;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background-color: #f9f9f9;
+        }
+
+        .chat-messages ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .chat-messages li {
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            background-color: #e9ecef;
+        }
+
+        .chat-input {
+            display: flex;
+            border-top: 1px solid #ddd;
+            background-color: #fff;
+        }
+
+        .chat-input input {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-right: 1px solid #ddd;
+            font-size: 1em;
+        }
+
+        .chat-input button {
+            padding: 10px 20px;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            font-size: 1em;
+        }
+
+        .chat-input button:hover {
+            background-color: #0056b3;
+        }
+    </style>
 </head>
 
 <body>
-    <h1>chatting....Inside <%= roomid%>
-    </h1>
-
-    <!-- <button id="btn">
-        click
-    </button>
-    <div id="from_server"> -->
-
-
-    <input type="text" id="chat_box">
-    <button id="send">send</button>
-    <ul id="msgList">
-
-    </ul>
+    <div class="chat-container">
+        <div class="chat-header">
+            Chatting inside <%= groupname %>
+        </div>
+        <div class="chat-messages">
+            <ul id="msgList">
+                <% for (let i = 0; i < previousmsgs.length; i++) { %>
+                    <li><%= previousmsgs[i].sender %> - <%= previousmsgs[i].content %></li>
+                <% } %>
+            </ul>
+        </div>
+        <div class="chat-input">
+            <input type="text" id="chat_box" placeholder="Type a message">
+            <button id="send">Send</button>
+        </div>
     </div>
 
     <script src="/socket.io/socket.io.js"></script>
     <script>
         var socket = io();
 
-        let input = document.getElementById('chat_box')
-        let msgList = document.getElementById('msgList')
-        let send = document.getElementById('send')
+        let input = document.getElementById('chat_box');
+        let msgList = document.getElementById('msgList');
+        let send = document.getElementById('send');
 
         socket.emit('join_room', {
             roomid: '<%= roomid %>'
-        })
+        });
 
         send.addEventListener('click', () => {
-            let msg = input.value
+            let msg = input.value;
             socket.emit('new_msg', {
                 message: msg,
                 roomid: '<%= roomid %>',
                 sender: '<%= user %>'
             });
-            input.value = ''
-        })
+            input.value = '';
+        });
 
         socket.on('msg_rcvd', (data) => {
-            let msg = document.createElement("li")
-            msg.textContent = data.sender+' - '+data.message
+            let msg = document.createElement("li");
+            msg.textContent = data.sender + ' - ' + data.message;
             msgList.appendChild(msg);
-        })  
+        });
     </script>
 </body>
 
