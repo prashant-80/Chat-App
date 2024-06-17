@@ -3,6 +3,10 @@ clone this project and in directory path execute the following commands
 ```
 npm i 
 ```
+now create .env file
+```
+DB_URL=<your_db_uri>
+```
 ```
 npm run dev
 ```
